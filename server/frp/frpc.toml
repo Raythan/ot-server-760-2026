@@ -1,0 +1,21 @@
+# frpc (WSL) — túnel SSH leva localhost:7000 até o frps na OCI (ver docs/CONEXAO-FRP-WSL.md).
+# serverAddr/serverPort são o túnel local aberto pelo SSH (-L 7000:127.0.0.1:7000), não o IP público direto.
+
+serverAddr = "127.0.0.1"
+serverPort = 7000
+auth.token = "otserver-frp-2026"
+loginFailExit = false
+
+[[proxies]]
+name = "ot-login-760"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 7171
+remotePort = 7171
+
+[[proxies]]
+name = "ot-game-760"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 7172
+remotePort = 7172

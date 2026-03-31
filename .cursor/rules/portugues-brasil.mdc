@@ -1,0 +1,11 @@
+---
+description: Respostas ao usuário sempre em português do Brasil (pt-BR)
+alwaysApply: true
+---
+
+# Idioma — português brasileiro
+
+- Escreva **sempre** em **português do Brasil (pt-BR)** ao falar com o usuário, em comentários destinados ao time e em documentação que o usuário pedir.
+- **Evite** português de Portugal e vocabulário associado: por exemplo prefira **arquivo** (não "ficheiro"), **aplicativo** quando for o caso, **banco de dados**, **rodar** / **executar** o servidor ou programa.
+- Use **você** como tratamento padrão (ou impessoal: "é preciso", "vale conferir"), coerente com o uso comum no Brasil.
+- Mantenha nomes técnicos em inglês quando for o padrão da comunidade (commit, branch, deploy); não traduza identificadores de código.

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!-- attackspeed="reducement or adjustment in attackspeed"
+if you type attackspeed="-500" you will have to wait 0.5 secs MORE before you can attack
+-->
+<mounts>
+   <mount id="2" clientid="234" name="Widow Queen" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="3" clientid="235" name="War Bear" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="4" clientid="236" name="Black Sheep" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="5" clientid="237" name="Midnight Panther" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="6" clientid="238" name="Cerberus" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="7" clientid="233" name="War Horse" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="8" clientid="244" name="Withe Horse" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="9" clientid="245" name="Brown Horse" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="10" clientid="248" name="Phantasmal Jade" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="11" clientid="249" name="Floating Kashmir" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="12" clientid="250" name="Flying Divan" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="13" clientid="251" name="Magic Carpet" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="14" clientid="254" name="Jousting Eagle" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="15" clientid="255" name="Panda" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="16" clientid="256" name="Terror Bird" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="17" clientid="262" name="Gloomwurm" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="18" clientid="230" name="Camel" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="19" clientid="231" name="Horse" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="20" clientid="267" name="Wolf" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="21" clientid="268" name="Cow" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="22" clientid="269" name="Gray Lion" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="23" clientid="270" name="Colorful Spider" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="24" clientid="271" name="Prismatic Unicorn" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="25" clientid="272" name="Knight Horse" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="26" clientid="273" name="Blue Scorpion" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="27" clientid="280" name="Undeath Horse Fire" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="28" clientid="281" name="Poison Scorpion" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="29" clientid="282" name="Singeing Steed" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="30" clientid="283" name="Ice Horse" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="31" clientid="285" name="Fire Fox" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="32" clientid="286" name="mount1" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="33" clientid="287" name="mount2" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="34" clientid="288" name="mount3" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="35" clientid="289" name="mount4" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="36" clientid="290" name="mount5" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="37" clientid="291" name="mount6" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="38" clientid="292" name="mount7" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="39" clientid="293" name="mount8" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="40" clientid="294" name="mount9" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="41" clientid="295" name="mount10" attackspeed="0" premium="1" default="0" speed="20"/>
+   <mount id="42" clientid="296" name="mount11" attackspeed="0" premium="1" default="0" speed="20"/>
+    <mount id="43" clientid="232" name="Colorful Unicorn" attackspeed="0" premium="1" default="0" speed="20"/>
+   
+    
+</mounts>

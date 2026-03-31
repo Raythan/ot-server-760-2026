@@ -1,0 +1,15 @@
+---
+description: Formato do diário local OT (entradas datadas, resumidas) em DIARIO-TRABALHO-LOCAL.md
+globs: "**/DIARIO*.md"
+alwaysApply: false
+---
+
+# Diário de trabalho local
+
+Ao editar `**/DIARIO*.md` neste repositório:
+
+1. Novas entradas vão na secção **Linha do tempo**, com cabeçalho `### YYYY-MM-DD — título curto`.
+2. Texto **resumido** em bullets; incluir paths `` `server/...` `` e decisões relevantes.
+3. Para o formato completo e quando atualizar, seguir a skill do projeto: `.cursor/skills/diario-trabalho-ot/SKILL.md`.
+
+Ficheiro principal: `server/DIARIO-TRABALHO-LOCAL.md`.

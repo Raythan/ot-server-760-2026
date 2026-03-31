@@ -1,0 +1,40 @@
+function onLogin(player)
+	if player:getLastLoginSaved() <= 0 or player:getStorageValue(30017) == 1 then
+		player:setStorageValue(30017, 0) -- reset storage for first items
+		
+		-- Items
+		--if player:getSex() == PLAYERSEX_FEMALE then
+			--player:addItem(3361, 1, true, -1, CONST_SLOT_ARMOR)
+		--else
+			--player:addItem(3361, 1, true, -1, CONST_SLOT_ARMOR)
+		--end
+		--player:addItem(2920, 1, true, -1, CONST_SLOT_AMMO)
+		--player:addItem(3336, 1, true, -1, CONST_SLOT_LEFT)
+		--player:addItem(3412, 1, true, -1, CONST_SLOT_RIGHT)
+		--player:addItem(3559, 1, true, -1, CONST_SLOT_LEGS)
+		--player:addItem(3552, 1, true, -1, CONST_SLOT_FEET)
+		--player:addItem(3355, 1, true, -1, CONST_SLOT_HEAD)
+
+		--local container = Game.createItem(2853, 1)
+		--container:addItem(3725, 50)
+		--container:addItem(3268, 1)
+		--container:addItem(3272, 1)
+		--container:addItem(3725, 50)
+		
+		--player:addItemEx(container, true, CONST_SLOT_BACKPACK)
+	
+		-- Load Default Outfit.
+		if player:getSex() == PLAYERSEX_FEMALE then
+			player:setOutfit({lookType = 136, lookHead = 78, lookBody = 68, lookLegs = 58, lookFeet = 95})
+		else
+			player:setOutfit({lookType = 128, lookHead = 78, lookBody = 68, lookLegs = 58, lookFeet = 95})
+		end
+		
+		local town = Town("Thais")
+		player:teleportTo(town:getTemplePosition())
+		player:setTown(town)
+		player:setDirection(DIRECTION_SOUTH)
+		town:getTemplePosition():sendMagicEffect(CONST_ME_TELEPORT)
+	end
+	return true
+end

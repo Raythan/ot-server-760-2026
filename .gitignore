@@ -1,0 +1,48 @@
+# --- Build (CMake / compilado) ---
+server/build/
+**/CMakeFiles/
+**/cmake_install.cmake
+**/CMakeCache.txt
+**/Makefile
+**/*.o
+**/*.a
+**/*.so.dbg
+compile_commands.json
+
+# Binário do servidor (gerado em build/)
+server/build/tfs
+server/tfs
+
+# --- Logs e PIDs em runtime ---
+server/logs/*.log
+server/logs/*.pid
+*.log
+
+# --- Arquivos compactados / dumps locais ---
+*.zip
+*.7z
+*.rar
+
+# --- Cliente OT (cópia local completa; não versionar) ---
+otclientv8/
+
+# --- Sistema / IDE ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vs/
+.idea/
+*.swp
+*~
+*.suo
+*.user
+*.userosscache
+
+# --- Python / temporários ---
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# --- Node (se algum dia existir na raiz) ---
+node_modules/

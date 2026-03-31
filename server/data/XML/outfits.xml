@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<outfits>
+	<!-- Female outfits -->
+	<outfit type="0" looktype="136" name="Citizen" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="137" name="Hunter" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="138" name="Mage" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="139" name="Knight" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="140" name="Noblewoman" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="141" name="Summoner" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="142" name="Warrior" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="163" name="New Citizen" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="165" name="New Hunter" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="167" name="New Warrior" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="175" name="New Druid" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="177" name="New Mage" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="182" name="New Knight" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="179" name="New Wizard" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="0" looktype="184" name="Assassin" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="186" name="Norseman" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="169" name="Golden" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="170" name="Demon" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="188" name="Beggar" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="190" name="Shaman" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="260" name="Dragon Slayer" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="264" name="Royal Costume" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="252" name="Game master" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="0" looktype="265" name="Outfit" premium="yes" unlocked="no" enabled="yes" />
+
+	<!-- Male outfits -->
+	<outfit type="1" looktype="128" name="Citizen" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="129" name="Hunter" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="130" name="Mage" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="131" name="Knight" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="132" name="Nobleman" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="133" name="Summoner" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="134" name="Warrior" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="162" name="New Citizen" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="164" name="New Hunter" premium="no" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="176" name="New Mage" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="181" name="New Knight" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="166" name="New Warrior" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="174" name="New Druid" premium="yes" unlocked="yes" enabled="yes" />
+
+	<outfit type="1" looktype="178" name="New Wizard" premium="yes" unlocked="yes" enabled="yes" />
+	<outfit type="1" looktype="183" name="Assassin" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="185" name="Norseman" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="168" name="Golden" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="171" name="Demon" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="172" name="Old Mage" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="180" name="Old Man" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="187" name="Beggar" premium="yes" unlocked="no" enabled="yes" />
+    <outfit type="1" looktype="189" name="Shaman" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="259" name="Dragon Slayer" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="263" name="Royal Costume" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="252" name="Game master" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="266" name="Outfit" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="274" name="Outfit1" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="275" name="Outfit2" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="276" name="Outfit3" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="277" name="Outfit4" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="279" name="Outfit5" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="297" name="Outfit6" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="298" name="Outfit7" premium="yes" unlocked="no" enabled="yes" />
+	<outfit type="1" looktype="299" name="Outfit8" premium="yes" unlocked="no" enabled="yes" />
+	
+</outfits>
