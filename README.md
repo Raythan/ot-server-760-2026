@@ -18,4 +18,4 @@ Servidor **Tenebra OT** (fork **The Forgotten Server**), cliente **7.72**. Este 
 ## Requisitos gerais
 
 - **Cliente / protocolo:** 772 — ver `server/src/definitions.h` (`CLIENT_VERSION_*`).
-- **Base de dados:** MySQL/MariaDB com o schema esperado pelo TFS (ex. import de `server/database.sql` na base `tibia`).
+- **Base de dados:** MySQL/MariaDB com o schema esperado pelo TFS (ex. import de `server/database.sql` na base `tibia`). O dump já **não inclui** tabelas `myaac_*` (MyAAC) nem `z_*` (Znote AAC / loja no site); numa base antiga que ainda as tenha, podes removê-las com `server/database-drop-myaac.sql` (script com ambos os conjuntos de `DROP`).

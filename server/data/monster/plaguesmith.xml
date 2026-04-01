@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Plaguesmith" nameDescription="a plaguesmith" race="venom" experience="3555" speed="320" manacost="0">
+	<health now="8250" max="8250" />
+	<look type="247" head="0" body="0" legs="0" feet="0" corpse="6516" />
+	<targetchange interval="4000" chance="10" />
+	<targetstrategy nearest="70" weakest="10" mostdamage="10" random="10" />
+	<flags>
+		<flag summonable="0" />
+		<flag attackable="1" />
+		<flag hostile="1" />
+		<flag illusionable="1" />
+		<flag convinceable="0" />
+		<flag pushable="0" />
+		<flag canpushitems="1" />
+		<flag canpushcreatures="1" />
+		<flag targetdistance="1" />
+		<flag staticattack="70" />
+		<flag runonhealth="500" />
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" chance="0" skill="85" attack="50" poison="200" />
+		<attack name="earth" min="-60" max="-114" radius="4" target="0" interval="2000" chance="15">
+			<attribute key="areaEffect" value="poison" />
+		</attack>
+		<attack name="earth" min="-100" max="-350" length="5" spread="3" interval="2000" chance="10">
+			<attribute key="areaEffect" value="yellowbubble" />
+		</attack>
+		<attack name="speed" interval="2000" chance="15" radius="4" target="0" speedchange="-800" duration="30000">
+			<attribute key="areaEffect" value="poison" />
+		</attack>
+	</attacks>
+	<defenses armor="40" defense="40">
+		<defense name="healing" min="200" max="280" interval="2000" chance="10">
+			<attribute key="areaEffect" value="blueshimmer" />
+		</defense>
+		<defense name="speed" interval="2000" chance="15" speedchange="440" duration="5000">
+			<attribute key="areaEffect" value="redshimmer" />
+		</defense>
+	</defenses>
+	<elements>
+		<element firePercent="30" />
+		<element icePercent="20" />
+		<element energyPercent="-10" />
+	</elements>
+	<immunities>
+		<immunity earth="1" />
+		<immunity paralyze="1" />
+		<immunity invisible="1" />
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="You are looking a bit feverish!" />
+		<voice sentence="You don't look that good!" />
+		<voice sentence="Hachoo!" />
+		<voice sentence="Cough Cough" />
+	</voices>
+	<loot>
+		<item id="3010" countmax="1" chance="35" /> <!-- an emerald bangle -->
+		<item id="3017" countmax="1" chance="200" /> <!-- a silver brooch -->
+		<item id="3031" countmax="100" chance="500" /> <!-- a gold coin -->
+		<item id="3031" countmax="100" chance="400" /> <!-- a gold coin -->
+		<item id="3031" countmax="65" chance="450" /> <!-- a gold coin -->
+		<item id="3033" countmax="3" chance="50" /> <!-- a small amethyst -->
+		<item id="3035" countmax="2" chance="70" /> <!-- a platinum coin -->
+		<item id="3092" countmax="1" chance="45" /> <!-- an axe ring -->
+		<item id="3093" countmax="1" chance="48" /> <!-- a club ring -->
+		<item id="3110" countmax="1" chance="200" /> <!-- a piece of iron -->
+		<item id="3120" countmax="1" chance="500" /> <!-- a moldy cheese -->
+		<item id="3265" countmax="1" chance="200" /> <!-- a two handed sword -->
+		<item id="3279" countmax="1" chance="22" /> <!-- a war hammer -->
+		<item id="3282" countmax="1" chance="290" /> <!-- a morning star -->
+		<item id="3305" countmax="1" chance="200" /> <!-- a battle hammer -->
+		<item id="3332" countmax="1" chance="10" /> <!-- a hammer of wrath -->
+		<item id="3371" countmax="1" chance="65" /> <!-- knight legs -->
+		<item id="3409" countmax="1" chance="200" /> <!-- a steel shield -->
+		<item id="3554" countmax="1" chance="12" /> <!-- steel boots -->
+		<item id="5189" countmax="1" chance="12" /> <!-- a piece of royal steel -->
+		<item id="5191" countmax="1" chance="10" /> <!-- a piece of hell steel -->
+		<item id="5190" countmax="1" chance="10" /> <!-- a piece of draconian steel -->
+		<item id="3060" countmax="1" chance="110" /> <!-- an orb -->
+		<item id="3447" countmax="4" chance="80" /> <!-- an arrow -->
+		<item id="5126" countmax="1" chance="100" /> <!-- a health potion -->
+	</loot>
+</monster>

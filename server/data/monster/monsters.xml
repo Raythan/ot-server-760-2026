@@ -93,6 +93,7 @@
 	<monster name="green djinn" file="greendjinn.xml" />
 	<monster name="grorlam" file="grorlam.xml" />
 	<monster name="the halloween hare" file="halloweenhare.xml" />
+	<monster name="hellspawn" file="hellspawn.xml" />
 	<monster name="hero" file="hero.xml" />
 	<monster name="horse" file="horse.xml" />
 	<monster name="horse1" file="horse(gray).xml" />
@@ -150,6 +151,7 @@
 	<monster name="thalas" file="pharaohthalas.xml" />
 	<monster name="vashresamun" file="pharaohvashresamun.xml" />
 	<monster name="pig" file="pig.xml" />
+	<monster name="plaguesmith" file="plaguesmith.xml" />
 	<monster name="plaguethrower" file="plaguethrower.xml" />
 	<monster name="poison spider" file="poisonspider.xml" />
 	<monster name="polar bear" file="polarbear.xml" />

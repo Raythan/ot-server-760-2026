@@ -17,6 +17,19 @@ Registo cronológico de decisões, ambiente e passos de compilação nesta máqu
 
 ## Linha do tempo
 
+### 2026-03-31 — Schema SQL: remoção das tabelas `myaac_*` (MyAAC)
+
+- No repositório não existem tabelas **`myacc*`**; o que havia no dump era **`myaac_*`** (site **MyAAC** em PHP). O **TFS** e a **webapp Node** não as referenciam.
+- **`server/database.sql`:** removidos CREATE/INSERT, índices e `AUTO_INCREMENT` das tabelas `myaac_*`.
+- **`server/database-drop-myaac.sql`:** script opcional para `DROP TABLE` numa base já existente.
+- **`README.md`:** nota sobre o dump e o script de remoção.
+
+### 2026-03-31 — Schema SQL: remoção das tabelas `z_*` (Znote / loja no site)
+
+- Tabelas **`z_*`** (`z_ots_comunication`, `z_polls`, `z_polls_answers`, `z_shop_*`) são típicas de **Znote AAC** / loja no site; **não há referências** em `server/src`, `server/data` nem na webapp (o `shop.lua` do servidor usa `shop_history`, não `z_shop_history`).
+- **`server/database.sql`:** removidos os blocos dessas tabelas.
+- **`server/database-drop-myaac.sql`:** acrescentados `DROP` das `z_*` (o ficheiro cobre agora MyAAC + legado `z_*`).
+
 ### 2026-03-31 — Webapp PWA: toasts, navegação compacta e cópia «Senha»
 
 - **`.gitignore`:** pasta **`chaves/`** para credenciais/chaves locais fora do Git.
