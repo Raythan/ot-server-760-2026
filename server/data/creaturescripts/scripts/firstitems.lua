@@ -19,6 +19,7 @@ function onLogin(player)
 		container:addItem(3725, 100) -- brown mushroom
 		container:addItem(3412, 1) -- wooden shield
 		container:addItem(3270, 1) -- club
+		container:addItem(3561, 1) -- jacket
 		container:addItem(3035, 10) -- platinum coin
 		
 		player:addItemEx(container, true, CONST_SLOT_BACKPACK)

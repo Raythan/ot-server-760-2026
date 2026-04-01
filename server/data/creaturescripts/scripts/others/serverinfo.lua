@@ -4,7 +4,7 @@ function onLogin(cid)
 
 	local text =
 		"Welcome to Tenebra:\n\n" ..
-		"Classic real tibia version from old times. With some custom\n\n" ..
+		"Classic real tibia version from old times. With some custom hunts and stuffs\n\n" ..
 		-- "Antibot-Measures:\n" ..
 		-- "- Only macro to make runes, cavebot is prohibited.\n" ..
 		-- "- 2x Regen\n" ..
