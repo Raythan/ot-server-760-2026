@@ -15,13 +15,13 @@ function onLogin(player)
 		--player:addItem(3552, 1, true, -1, CONST_SLOT_FEET)
 		--player:addItem(3355, 1, true, -1, CONST_SLOT_HEAD)
 
-		--local container = Game.createItem(2853, 1)
-		--container:addItem(3725, 50)
-		--container:addItem(3268, 1)
-		--container:addItem(3272, 1)
-		--container:addItem(3725, 50)
+		local container = Game.createItem(2853, 1)
+		container:addItem(3725, 100) -- brown mushroom
+		container:addItem(3412, 1) -- wooden shield
+		container:addItem(3270, 1) -- club
+		container:addItem(3035, 10) -- platinum coin
 		
-		--player:addItemEx(container, true, CONST_SLOT_BACKPACK)
+		player:addItemEx(container, true, CONST_SLOT_BACKPACK)
 	
 		-- Load Default Outfit.
 		if player:getSex() == PLAYERSEX_FEMALE then
@@ -30,11 +30,12 @@ function onLogin(player)
 			player:setOutfit({lookType = 128, lookHead = 78, lookBody = 68, lookLegs = 58, lookFeet = 95})
 		end
 		
-		local town = Town("Thais")
-		player:teleportTo(town:getTemplePosition())
+		local town = Town("Rookgaard")
+		local spawnPos = Position(32104, 32192, 6)
+		player:teleportTo(spawnPos)
 		player:setTown(town)
 		player:setDirection(DIRECTION_SOUTH)
-		town:getTemplePosition():sendMagicEffect(CONST_ME_TELEPORT)
+		spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
 	end
 	return true
 end

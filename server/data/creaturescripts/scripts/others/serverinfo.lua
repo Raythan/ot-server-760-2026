@@ -14,7 +14,7 @@ function onLogin(cid)
 		-- "- 2x Drop Gold\n" ..
 		"- Promotion 10k\n" ..
 		"- Desert Quest Alone\n" ..
-		"- Multi-Clienting: Max 4 clients allowed.\n\n" ..
+		-- "- Multi-Clienting: Max 4 clients allowed.\n\n" ..
 		"With medium rates, non-stackable runes only created by the players themselves,\n" ..
 		"accurate 7.4 formulas, and tons more this is guaranteed to bring back\n" ..
 		"all the good memories of the past!\n\n" ..

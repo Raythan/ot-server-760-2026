@@ -14,13 +14,17 @@ registerSW({ immediate: true });
 const TOKEN_KEY = 'ot_jwt';
 const GAME_TITLE = 'Tenebra OT';
 
-/** Rótulos para IDs de vocação TFS (0 = None / aprendiz até escolher classe no jogo). */
+/** Nomes de vocação alinhados a `server/data/XML/vocations.xml` (lista de personagens em inglês). */
 const VOCATION_LABELS: Record<number, string> = {
-  0: 'Aprendiz',
-  1: 'Feiticeiro',
-  2: 'Druida',
-  3: 'Paladino',
-  4: 'Cavaleiro',
+  0: 'No Vocation',
+  1: 'Sorcerer',
+  2: 'Druid',
+  3: 'Paladin',
+  4: 'Knight',
+  5: 'Master Sorcerer',
+  6: 'Elder Druid',
+  7: 'Royal Paladin',
+  8: 'Elite Knight',
 };
 
 const DEFAULT_CHAR_LIMIT = 50;
