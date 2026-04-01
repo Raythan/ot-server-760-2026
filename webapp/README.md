@@ -48,7 +48,8 @@ Produção: `npm run build`, depois `node dist/index.js`. Use **HTTPS** na frent
 
 1. Opcional: copie `.env.example` para `.env` e alinhe `VITE_DEV_*` com `ports.example.env`.
 2. Para produção em outro host, defina `VITE_API_URL` no `.env` antes do build.
-3. Em desenvolvimento (com a API rodando):
+3. **Lista de personagens e `/api`:** em desenvolvimento, abra sempre o site pelo URL do Vite (ex. `http://localhost:5173`) para os pedidos a `/api` serem encaminhados pelo proxy. Em produção, se o site estático e a API tiverem origens diferentes, configure `VITE_API_URL` no build do cliente (URL base da API, sem barra final) e ajuste `CORS_ORIGIN` na API.
+4. Em desenvolvimento (com a API rodando):
 
 ```bash
 cd webapp/client

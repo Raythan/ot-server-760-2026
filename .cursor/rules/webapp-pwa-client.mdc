@@ -1,0 +1,12 @@
+---
+description: Cliente PWA (Vite) — layout, toasts e cópia pt-BR
+globs: "webapp/client/**/*.{ts,html,css}"
+alwaysApply: false
+---
+
+# Cliente webapp (PWA)
+
+- **Título da aplicação:** usar **«Tenebra OT»** no **rodapé** (`site-footer`), não na barra superior — a `nav` fica só com separadores e ações (evita quebras em ecrãs estreitos).
+- **Feedback ao utilizador:** mensagens temporárias com **`showToast`** em `main.ts`; o contentor **`#toast-root`** está no **`index.html`** como irmão de `#app`, **não** dentro do `innerHTML` de `#app`, para não ser apagado a cada `render()`.
+- **Cópia:** preferir **«Senha»** (pt-BR) em rótulos e mensagens da API expostas ao utilizador, em vez de «palavra-passe».
+- **Sessão:** com token, mostrar só **Personagens** + **Terminar sessão**; sem token, só **Criar conta** + **Entrar**.

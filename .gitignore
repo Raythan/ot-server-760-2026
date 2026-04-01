@@ -51,3 +51,6 @@ webapp/**/dist/
 # Segredos locais (API / cliente)
 .env
 .env.local
+
+# Chaves / credenciais locais (pasta dedicada)
+chaves/

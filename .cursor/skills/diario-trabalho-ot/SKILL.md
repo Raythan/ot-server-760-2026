@@ -49,3 +49,9 @@ Usar a data indicada pelo usuário ou a data “hoje” do ambiente da conversa 
 ## Relação com regras
 
 O arquivo **`.cursor/rules/diario-trabalho-local.mdc`** reforça este formato ao editar arquivos `DIARIO*.md`.
+
+## Webapp cliente (PWA) — o que registar quando mudar
+
+- Fluxo **contas / personagens / JWT / cache** (`webapp/client`, `webapp/server`): mencionar rotas afetadas e ficheiros como `charactersCache.ts` ou `index.ts` da API.
+- **UX:** se o feedback deixar de ser bloco no `<main>` e passar a **toast** (`#toast-root`), ou se o **título da app** estiver só no rodapé — vale uma linha no diário para quem mantém o layout.
+- Cópia em **pt-BR** (ex.: «Senha»): anotar só se houver troca sistemática de termos na API + cliente.

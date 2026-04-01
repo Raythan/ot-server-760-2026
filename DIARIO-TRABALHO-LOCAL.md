@@ -17,6 +17,20 @@ Registo cronológico de decisões, ambiente e passos de compilação nesta máqu
 
 ## Linha do tempo
 
+### 2026-03-31 — Webapp PWA: toasts, navegação compacta e cópia «Senha»
+
+- **`.gitignore`:** pasta **`chaves/`** para credenciais/chaves locais fora do Git.
+- **`webapp/client`:** título **Tenebra OT** apenas no **rodapé**; barra superior só com separadores e **Terminar sessão** (sem competir com botões no mobile); `showToast` + **`#toast-root`** no `index.html` **fora** de `#app` (mensagens temporárias, sem bloco fixo no `<main>`); `lang="pt-BR"`.
+- **Cópia:** «**Senha**» em vez de «palavra-passe» na UI e mensagens da API (`webapp/server/src/index.ts`).
+- **Regra Cursor:** `.cursor/rules/webapp-pwa-client.mdc` — convenções do cliente PWA.
+
+### 2026-03-31 — Lista de personagens: cache 3 min, limite 50 e API (webapp)
+
+- **`webapp/server/src/index.ts`:** `online` normalizado com `mysqlOnlineToBoolean` (bigint/buffer); `GET /api/characters` devolve `limit: 50`; `POST /api/characters` recusa com **400** se `COUNT(*) >= 50` para a conta (`deletion = 0`).
+- **`webapp/client/src/charactersCache.ts`:** cache em `localStorage` (`ot_characters_cache_v1`), TTL **3 min**, chave por `accountId` extraído do JWT (payload base64url); `invalidateCharactersCache` em logout, login, registo, criar e eliminar personagem.
+- **`webapp/client/src/main.ts`:** lista imediata com cache válido; erros de rede/API com mensagem real; contador **(N/50)**; formulário e botão «Criar» desativados no limite; botão **Atualizar lista** (fetch forçado).
+- **`webapp/README.md`:** nota explícita sobre URL do Vite em dev e `VITE_API_URL` / `CORS` em prod.
+
 ### 2026-03-31 — Login por e-mail, aprendiz nível 8 e painel de personagens (webapp)
 
 - **Cliente OT (`otclientv8/`, pasta local, ainda ignorada pelo Git):** em **`modules/game_features/features.lua`**, `GameAccountNames` ativado para protocolo **772–839** para enviar **string** (e-mail) no login; **`entergame`**: campo de conta como **TextEdit**, rótulo **E-mail**; tradução **`E-mail:`** em `neededtranslations.lua`.
@@ -94,7 +108,7 @@ cmake --build . -j"$(nproc)"
 - **MySQL** corre **localmente no Windows** (Workbench, XAMPP, MariaDB instalador, etc.).
 - O **`tfs`** liga-se ao MySQL pelo IP do **host Windows** visto a partir do WSL (`mysqlHost` em `server/config.lua`, por omissão `172.30.32.1` — igual ao padrão usado no outro projeto OTServico 8.60). Se o IP mudar após reboot/rede, actualizar `mysqlHost` ou usar o comando indicado no comentário do `server/config.lua`.
 - No Windows, o serviço MySQL/MariaDB tem de **aceitar ligações TCP** na porta 3306 a partir do WSL (firewall / `bind-address` em `my.ini` — por vezes é preciso `0.0.0.0` ou `172.30.32.1` em vez de só `127.0.0.1`).
-- Utilizador e palavra-passe do MySQL no Windows preenchem-se em `mysqlUser` / `mysqlPass` em `server/config.lua`.
+- Utilizador e senha do MySQL no Windows preenchem-se em `mysqlUser` / `mysqlPass` em `server/config.lua`.
 
 **Import do `database.sql`**
 

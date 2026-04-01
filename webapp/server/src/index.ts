@@ -10,6 +10,18 @@ import { mapMysqlOrSystemError } from './mysqlErrors.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-only-change-JWT_SECRET';
 
+/** Máximo de personagens por conta (API + cliente). */
+const MAX_CHARACTERS_PER_ACCOUNT = 50;
+
+function mysqlOnlineToBoolean(value: unknown): boolean {
+  if (value === true || value === 1) return true;
+  if (typeof value === 'bigint') return value === 1n;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') return value === '1';
+  if (Buffer.isBuffer(value)) return value.length > 0 && value[0] === 1;
+  return false;
+}
+
 /** CORS: em dev com Vite, o browser usa o mesmo host do site e o proxy; `true` reflecte a origem. */
 function corsOriginFromEnv(): boolean | string | RegExp {
   const v = process.env.CORS_ORIGIN;
@@ -86,7 +98,7 @@ function verifyBearer(authorization: string | undefined): number {
 function validatePassword(p: string): void {
   if (typeof p !== 'string' || p.length < 6 || p.length > 48) {
     throw Object.assign(
-      new Error('A palavra-passe deve ter entre 6 e 48 caracteres.'),
+      new Error('A senha deve ter entre 6 e 48 caracteres.'),
       {
         statusCode: 400,
       }
@@ -99,7 +111,7 @@ function validateEmailForRegister(email: string): void {
   if (t.length < 3 || t.length > 255) {
     throw Object.assign(
       new Error(
-        'Indique um endereço de e-mail válido para recuperação da palavra-passe.'
+        'Indique um endereço de e-mail válido para recuperação da senha.'
       ),
       {
         statusCode: 400,
@@ -109,7 +121,7 @@ function validateEmailForRegister(email: string): void {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t)) {
     throw Object.assign(
       new Error(
-        'Indique um endereço de e-mail válido para recuperação da palavra-passe.'
+        'Indique um endereço de e-mail válido para recuperação da senha.'
       ),
       {
         statusCode: 400,
@@ -215,7 +227,7 @@ fastify.post<{ Body: { email?: string; password?: string } }>(
     if (!row || row.password !== hash) {
       return reply
         .code(401)
-        .send({ error: 'E-mail ou palavra-passe incorretos.' });
+        .send({ error: 'E-mail ou senha incorretos.' });
     }
     const token = signToken(row.id);
     return { token, accountId: row.id };
@@ -252,8 +264,9 @@ fastify.get('/api/characters', async (request) => {
       name: r.name,
       level: r.level,
       vocation: r.vocation,
-      online: Number(r.online) === 1,
+      online: mysqlOnlineToBoolean(r.online),
     })),
+    limit: MAX_CHARACTERS_PER_ACCOUNT,
   };
 });
 
@@ -323,6 +336,19 @@ fastify.post<{
   );
   if (Number((dup as { c: number }[])[0]?.c ?? 0) > 0) {
     return reply.code(409).send({ error: 'Esse nome já está em uso.' });
+  }
+
+  const [countRows] = await pool.query(
+    'SELECT COUNT(*) AS c FROM `players` WHERE `account_id` = ? AND `deletion` = 0',
+    [accountId]
+  );
+  if (
+    Number((countRows as { c: number }[])[0]?.c ?? 0) >=
+    MAX_CHARACTERS_PER_ACCOUNT
+  ) {
+    return reply.code(400).send({
+      error: `Limite de ${MAX_CHARACTERS_PER_ACCOUNT} personagens por conta.`,
+    });
   }
 
   const conn = await pool.getConnection();
