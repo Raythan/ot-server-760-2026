@@ -1,4 +1,4 @@
-# Diário de trabalho local (servidor OT / TFS)
+# Diário de trabalho local (projeto OT / TFS)
 
 Registo cronológico de decisões, ambiente e passos de compilação nesta máquina. Serve como memória do projeto, não como documentação oficial upstream.
 
@@ -9,13 +9,21 @@ Registo cronológico de decisões, ambiente e passos de compilação nesta máqu
 | Item | Valor |
 |------|--------|
 | Motor | Fork baseado em **The Forgotten Server (TFS)** — executável `tfs` |
-| Cliente / protocolo | **772** (7.72) — ver `src/definitions.h` (`CLIENT_VERSION_MIN` / `MAX` / `STR`) |
+| Cliente / protocolo | **772** (7.72) — ver `server/src/definitions.h` (`CLIENT_VERSION_MIN` / `MAX` / `STR`) |
 | Repositório (Windows) | `C:\GitHub\ot-server-760-2026` |
-| Código-fonte do servidor | Esta pasta `server/` |
+| Código-fonte do servidor | Pasta **`server/`** |
 
 ---
 
 ## Linha do tempo
+
+### 2026-03-31 — Web app (API + Vite), documentação e diário na raiz
+
+- Pasta **`webapp/`**: API Node (`webapp/server`, Fastify, **mysql2**) e cliente PWA (`webapp/client`, Vite). Senhas **SHA1** alinhadas ao TFS; **`JWT_SECRET`** e credenciais MySQL só em **`.env`** (arquivo ignorado pelo Git; usar **`webapp/server/.env.example`** como modelo).
+- **`README.md` na raiz** descreve `server/`, `webapp/` e o diário local. **`webapp/README.md`** documenta portas, proxy, CORS e o detalhe **MySQL no Windows** (`MYSQL_HOST=localhost` vs `127.0.0.1` com MariaDB/XAMPP).
+- **`DIARIO-TRABALHO-LOCAL.md`** está na **raiz** (antes havia cópia/caminho sob `server/`). Skill **`.cursor/skills/diario-trabalho-ot/SKILL.md`** e regra **`.cursor/rules/diario-trabalho-local.mdc`** ajustadas ao **português do Brasil** e ao formato de entradas datadas.
+- Mensagens de erro da API (**`webapp/server/src/mysqlErrors.ts`**) em pt-BR, com dica de `localhost` quando houver *access denied*.
+- Removido **`server/data/spells/spells x 1.xml`** (nome duplicado/errado; o servidor carrega **`server/data/spells/spells.xml`**).
 
 ### 2026-03-31 — Compilação no WSL (Ubuntu 24.04)
 
@@ -37,15 +45,15 @@ Registo cronológico de decisões, ambiente e passos de compilação nesta máqu
 
 1. **Boost.DateTime + `posix_time::seconds`**  
    Enums anónimos `read_timeout` / `write_timeout` em `Connection` não eram aceites como tipo integral pelo construtor de `seconds` (Boost 1.83).  
-   *Correção:* `static constexpr int` em `src/connection.h`.
+   *Correção:* `static constexpr int` em `server/src/connection.h`.
 
 2. **`std::allocate_shared` + alocador em pool (`LockfreePoolingAllocator`)**  
    GCC 13 valida `std::allocator_traits` com mais rigor; faltava `rebind` coerente e construtor por omissão.  
-   *Correção:* `src/lockfree.h` — `rebind`, construtor default, construtor de cópia entre especializações; `src/outputmessage.cpp` — uso directo de `LockfreePoolingAllocator<OutputMessage, …>`.
+   *Correção:* `server/src/lockfree.h` — `rebind`, construtor default, construtor de cópia entre especializações; `server/src/outputmessage.cpp` — uso directo de `LockfreePoolingAllocator<OutputMessage, …>`.
 
 3. **Linkagem Lua inconsistente**  
    O CMake podia apanhar **includes Lua 5.2** e ligar **`libluajit-5.1.so`**, gerando símbolos indefinidos (`lua_pcallk`, `lua_getglobal`, etc.).  
-   *Correção de configuração:* passar `-DLUA_INCLUDE_DIR` e `-DLUA_LIBRARY` explicitamente para Lua 5.2; `cmake/FindLuaJIT.cmake` actualizado com `include/luajit-2.1` para futuras builds com LuaJIT no Ubuntu recente.
+   *Correção de configuração:* passar `-DLUA_INCLUDE_DIR` e `-DLUA_LIBRARY` explicitamente para Lua 5.2; `server/cmake/FindLuaJIT.cmake` actualizado com `include/luajit-2.1` para futuras builds com LuaJIT no Ubuntu recente.
 
 **Resultado**
 
@@ -77,9 +85,9 @@ cmake --build . -j"$(nproc)"
 ### 2026-03-31 — MySQL no Windows, servidor no WSL
 
 - **MySQL** corre **localmente no Windows** (Workbench, XAMPP, MariaDB instalador, etc.).
-- O **`tfs`** liga-se ao MySQL pelo IP do **host Windows** visto a partir do WSL (`mysqlHost` em `config.lua`, por omissão `172.30.32.1` — igual ao padrão usado no outro projeto OTServico 8.60). Se o IP mudar após reboot/rede, actualizar `mysqlHost` ou usar o comando indicado no comentário do `config.lua`.
+- O **`tfs`** liga-se ao MySQL pelo IP do **host Windows** visto a partir do WSL (`mysqlHost` em `server/config.lua`, por omissão `172.30.32.1` — igual ao padrão usado no outro projeto OTServico 8.60). Se o IP mudar após reboot/rede, actualizar `mysqlHost` ou usar o comando indicado no comentário do `server/config.lua`.
 - No Windows, o serviço MySQL/MariaDB tem de **aceitar ligações TCP** na porta 3306 a partir do WSL (firewall / `bind-address` em `my.ini` — por vezes é preciso `0.0.0.0` ou `172.30.32.1` em vez de só `127.0.0.1`).
-- Utilizador e palavra-passe do MySQL no Windows preenchem-se em `mysqlUser` / `mysqlPass` em `config.lua`.
+- Utilizador e palavra-passe do MySQL no Windows preenchem-se em `mysqlUser` / `mysqlPass` em `server/config.lua`.
 
 **Import do `database.sql`**
 
@@ -88,15 +96,15 @@ cmake --build . -j"$(nproc)"
 
 ### 2026-03-31 — IP público 144.33.23.83 e MySQL 8 dentro do WSL
 
-- **`ip`** em `config.lua` = **`144.33.23.83`** — endereço anunciado aos clientes (login); o `tfs` continua a escutar em todas as interfaces com `bindOnlyGlobalAddress = false` (portas 7171/7172), compatível com frp/túnel na OCI.
-- **Base de dados** passou a ser **MySQL 8 no próprio WSL** (`mysqlHost = 127.0.0.1`), utilizador **`tfs`** / password **`otserver760`** na base **`tibia`** (criado pelo script `scripts/setup-mysql-wsl.sh`). Alterar a password no MySQL e em `config.lua` em produção.
+- **`ip`** em `server/config.lua` = **`144.33.23.83`** — endereço anunciado aos clientes (login); o `tfs` continua a escutar em todas as interfaces com `bindOnlyGlobalAddress = false` (portas 7171/7172), compatível com frp/túnel na OCI.
+- **Base de dados** passou a ser **MySQL 8 no próprio WSL** (`mysqlHost = 127.0.0.1`), utilizador **`tfs`** / password **`otserver760`** na base **`tibia`** (criado pelo script `server/scripts/setup-mysql-wsl.sh`). Alterar a password no MySQL e em `server/config.lua` em produção.
 - Script de preparação (executar no WSL como root): `wsl -d Ubuntu -u root -- bash /mnt/c/GitHub/ot-server-760-2026/server/scripts/setup-mysql-wsl.sh`
 
 ---
 
 ## Próximos passos sugeridos (a preencher)
 
-- [x] Base de dados: importar `database.sql` na base `tibia` (feito neste ambiente; validar credenciais em `config.lua`).
+- [x] Base de dados: importar `database.sql` na base `tibia` (feito neste ambiente; validar credenciais em `server/config.lua`).
 - [ ] Teste: arrancar `./tfs` e validar login / jogo com cliente 7.72.
 - [ ] Opcional: experimentar `-DUSE_LUAJIT=ON` com includes LuaJIT correctos após ajuste do `FindLuaJIT`.
 
@@ -121,7 +129,7 @@ cmake --build . -j"$(nproc)"
 - Script **`server/scripts/setup-accounts-raythan.sql`** (executado no MySQL): conta **2** / senha **`123`** com 6 personagens god (`Adm …`); contas **50001–50005** / senha **`123`** com `email` = `raythan`…`rodrigo` (o cliente OT usa **número de conta**, não texto). Em cada 5000x há 4 personagens (voc 1–4: sorcerer, druid, paladin, knight).
 - **`server/scripts/grant-tfs-wsl-access.sql`**: `GRANT` para `tfs`@`%` quando o acesso vem do WSL (evita *Access denied* para `tfs`@`172.30.x.x`).
 
-**`config.lua`**
+**`server/config.lua`**
 
 - Comentário de referência ao projeto anterior: **`C:\GitHub\ot-server-860-2026`**.
 - MySQL no **host Windows** a partir do WSL: `mysqlHost = 172.30.32.1`, utilizador **`root`** (senha vazia ou a definir localmente).

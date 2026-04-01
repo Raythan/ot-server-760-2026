@@ -2,7 +2,7 @@ function onSay(cid, player, words, param)
 	cid:registerEvent("modalwindowhelper")
  
     local titulo = "Automatic Tutor" -- Esse é o titulo do ModalWindow
-    local mensagem = "Hello, I am the automatic tutor of Imperium, I can answer some of your questions." -- Subtitulo do ModalWindow
+    local mensagem = "Hello, I am the automatic tutor of Tenebra OT, I can answer some of your questions." -- Subtitulo do ModalWindow
  
     local popup = ModalWindow(1000, titulo, mensagem)
  

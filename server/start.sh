@@ -3,7 +3,7 @@
 # script pra rodar novamente o server automático em caso de crash
 echo "Iniciando el programa"
 
-cd /home/ubuntu/imperium
+cd /home/ubuntu/tenebra
 mkdir -p logs
 
 #configs necessárias para o Anti-rollback

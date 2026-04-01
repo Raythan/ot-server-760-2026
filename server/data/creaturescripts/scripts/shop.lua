@@ -2,10 +2,10 @@ local SHOP_EXTENDED_OPCODE = 201
 local SHOP_OFFERS = {}
 local SHOP_CALLBACKS = {}
 local SHOP_CATEGORIES = nil
-local SHOP_BUY_URL = "https://imperium-retro.com/?points" -- can be empty
+local SHOP_BUY_URL = "" -- can be empty
 local SHOP_AD = { -- can be nil
-	image = "https://i.ibb.co/X4ZK3wY/banner.png", --https://imperium-retro.com/images/shop/banner.png
-	url = "https://imperium-retro.com/?points",
+	image = "https://i.ibb.co/X4ZK3wY/banner.png",
+	url = "",
 	text = ""
 }
 
@@ -19,15 +19,15 @@ function init()
 	})
    --premiumCategory.addItem(10, 3043, 100, "Crystal Coins", "Enoy Test Server!.")
    --premiumCategory.addItem(1, 3057, 1, "Amulet of Loss", "Enoy Test Server!.")
-   premiumCategory.addItem(11, 5128, 1, "Imperium Ticket", "The value of this ticket is 10 premium points.")
-   premiumCategory.addItem(2, 5130, 1, "Imperium Coin", "Coin used to get premium points.")
+   premiumCategory.addItem(11, 5128, 1, "Tenebra Ticket", "The value of this ticket is 10 premium points.")
+   premiumCategory.addItem(2, 5130, 1, "Tenebra Coin", "Coin used to get premium points.")
    
    local regenerationCategory = addCategory({
 		type="item",
 		item=ItemType(5101):getId(),
 		name="Regeneration Items"
 	})
-	regenerationCategory.addItem(80, 5102, 1, "Imperium Ring", "Eternal Light, + 1HP/2s + 2MP/3s.")
+	regenerationCategory.addItem(80, 5102, 1, "Tenebra Ring", "Eternal Light, + 1HP/2s + 2MP/3s.")
 	regenerationCategory.addItem(50, 3549, 1, "Pair Of Soft Boots", "INFINITE Regen + 1 HP/MP per 2 second.")
    
 	local outfitsCategory = addCategory({
@@ -96,9 +96,9 @@ function init()
 		item=ItemType(3460):getId(),
 		name="Utilities"
 	})
-	toolsCategory.addItem(40, 5247, 1, "Imperium Amulet", "+10 Speed.")
+	toolsCategory.addItem(40, 5247, 1, "Tenebra Amulet", "+10 Speed.")
 	toolsCategory.addItem(30, 5246, 1, "Magic Gold Converter", " (Infinite) Use to converter all gold in you inventory.")
-	toolsCategory.addItem(10, 5133, 1, "Imperium Backpack", "Weighs 0.50 oz and 25 Slots.")
+	toolsCategory.addItem(10, 5133, 1, "Tenebra Backpack", "Weighs 0.50 oz and 25 Slots.")
 	toolsCategory.addItem(10, 5171, 1, "Obsidian Knife", "Sharp and light, this is a useful tool for tanners, doctors and assassins.")
 	toolsCategory.addItem(10, 5139, 1, "Light Shovel", "Same purpose as regular Shovels, but 20 oz lighter.")
 	toolsCategory.addItem(10, 5138, 1, "Elvenhair Rope", "Light Rope 6.00 oz.")

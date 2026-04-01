@@ -44,5 +44,10 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 
-# --- Node (se algum dia existir na raiz) ---
+# --- Node (webapp e futuros pacotes na raiz) ---
 node_modules/
+webapp/**/dist/
+
+# Segredos locais (API / cliente)
+.env
+.env.local

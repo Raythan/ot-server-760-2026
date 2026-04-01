@@ -1,7 +1,24 @@
 function onLogin(cid)
-local player = Player(cid)
-local firstLogin = player:getStorageValue(7895412)
-local text = "Welcome to Imperium:\n\nWe welcome you all to Imperium who have come to enjoy the best of what classic Tibia has to offer.\n\nAntibot-Measures: Only macro to make runes, cavebot is prohibited.\n2x Regen\n3x Loot\n2x Magic\n3x Skills\n2x Drop Gold\nPromotion 10k\nDesert Quest Alone\nMulti-Clienting: Max 4 clients allowed.\n\nWith medium rates, non-stackable runes only created by the players themselves, accurate 7.4 formulas,\nand tons more this is guaranteed to bring back all the good memories of the past!.\n\n\nImperium. " -- \n
+	local player = Player(cid)
+	local firstLogin = player:getStorageValue(7895412)
+
+	local text =
+		"Welcome to Tenebra:\n\n" ..
+		"Classic real tibia version from old times. With some custom\n\n" ..
+		-- "Antibot-Measures:\n" ..
+		-- "- Only macro to make runes, cavebot is prohibited.\n" ..
+		-- "- 2x Regen\n" ..
+		-- "- 3x Loot\n" ..
+		-- "- 2x Magic\n" ..
+		-- "- 3x Skills\n" ..
+		-- "- 2x Drop Gold\n" ..
+		"- Promotion 10k\n" ..
+		"- Desert Quest Alone\n" ..
+		"- Multi-Clienting: Max 4 clients allowed.\n\n" ..
+		"With medium rates, non-stackable runes only created by the players themselves,\n" ..
+		"accurate 7.4 formulas, and tons more this is guaranteed to bring back\n" ..
+		"all the good memories of the past!\n\n" ..
+		"Tenebra."
 
 	if firstLogin ~= 1 then
 		player:setStorageValue(7895412, 1)

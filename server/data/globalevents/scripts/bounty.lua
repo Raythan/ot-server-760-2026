@@ -1,23 +1,29 @@
+-- Usa a mesma tabela que `data/lib/custom/bountyhunter.lua` (`bounty_hunter_system`).
+-- Uma única query com JOIN evita "Commands out of sync" por queries aninhadas sem result.free.
 function onThink(interval)
-
-    local player = db.storeQuery("SELECT `sp_id`, `prize` FROM `bounty_hunters` WHERE `killed` = '0' ORDER BY `prize` DESC LIMIT 3;")
+    local q = [[
+        SELECT p.`name` AS `pname`, b.`prize`, b.`currencyType`
+        FROM `bounty_hunter_system` b
+        INNER JOIN `players` p ON p.`id` = b.`target_id`
+        WHERE b.`killed` = 0
+        ORDER BY b.`prize` DESC
+        LIMIT 3
+    ]]
+    local res = db.storeQuery(q)
     local output = "MOST WANTED:\n"
-    if(player ~= false) then
+    if res ~= false then
         local number = 1
-                while (true) do
-                    local name = result.getDataString(player, "sp_id")
-                    local prize = result.getDataInt(player, "prize")
-                    local playerName = db.storeQuery("SELECT `name` FROM `players` WHERE `players`.`id` = "..name..";")
-                    local playerName1 = result.getDataString(playerName, "name")
-                    output = output.. "\n"..number..". "..playerName1.." - "..prize.."k"
-                    number = number + 1
-                    if not(result.next(player)) then
-                        break
-                    end
-                end
-                result.free(player)
+        repeat
+            local playerName = result.getDataString(res, "pname")
+            local prize = result.getDataInt(res, "prize")
+            local currency = result.getDataString(res, "currencyType")
+            output = output .. "\n" .. number .. ". " .. playerName .. " - " .. prize .. " " .. currency
+            number = number + 1
+        until not result.next(res)
+        result.free(res)
+    else
+        output = output .. "\n(no active bounties)"
     end
     Game.broadcastMessage(output)
-
-return true
+    return true
 end

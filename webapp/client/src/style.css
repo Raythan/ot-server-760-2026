@@ -1,0 +1,252 @@
+:root {
+  --bg: #16171d;
+  --surface: #1f2028;
+  --text: #9ca3af;
+  --heading: #f3f4f6;
+  --accent: #c084fc;
+  --accent-dim: rgba(192, 132, 252, 0.2);
+  --border: #2e303a;
+  --err: #f87171;
+  --font: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+
+#app {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.brand {
+  font-weight: 600;
+  color: var(--heading);
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.tabs button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+}
+
+.tabs button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--heading);
+}
+
+.tabs button.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--heading);
+}
+
+.tabs button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn.ghost {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+}
+
+.btn.ghost:hover {
+  border-color: var(--err);
+  color: var(--err);
+}
+
+.main {
+  flex: 1;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2rem;
+  width: 100%;
+}
+
+.flash {
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  color: var(--heading);
+  margin: 0 0 1rem;
+}
+
+.card h1 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--heading);
+  margin: 0 0 0.5rem;
+}
+
+.card h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--heading);
+  margin: 1.5rem 0 0.75rem;
+}
+
+.hint {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}
+
+.hint code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--bg);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--heading);
+}
+
+form input,
+form select {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--heading);
+  font: inherit;
+}
+
+form button[type='submit'] {
+  margin-top: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+form button[type='submit']:hover {
+  filter: brightness(1.08);
+}
+
+.opt {
+  font-weight: 400;
+  color: var(--text);
+  font-size: 0.85em;
+}
+
+.result {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--heading);
+}
+
+.char-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.char-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.char-list .name {
+  color: var(--heading);
+  font-weight: 500;
+}
+
+.char-list .meta {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.muted {
+  color: var(--text);
+  margin: 0;
+}
+
+.err {
+  color: var(--err);
+  margin: 0;
+}
+
+.field-err {
+  color: var(--err);
+  font-size: 0.9rem;
+  margin: -0.25rem 0 0.5rem;
+}
+
+.create-wrap {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.site-footer {
+  margin-top: auto;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text);
+  border-top: 1px solid var(--border);
+}
+
+.site-footer p {
+  margin: 0;
+}

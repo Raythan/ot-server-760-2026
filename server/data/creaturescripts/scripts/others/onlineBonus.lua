@@ -11,7 +11,7 @@ local function addOnlineToken(playerId)
     end
     player:addOnlineTime(1)
     player:getPosition():sendMagicEffect(13)
-    player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You get 1 imperium coin for staying online for 1 hour without logging out.")
+    player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "You get 1 tenebra coin for staying online for 1 hour without logging out.")
     player:addItem(5130, 1)
     
     event[player:getId()] = addEvent(addOnlineToken, 60 * 60 * 1000, player:getId())

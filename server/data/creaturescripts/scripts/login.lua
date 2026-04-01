@@ -8,7 +8,7 @@ function onLogin(player)
 			player:sendTextMessage(MESSAGE_STATUS_DEFAULT, loginStr)
 		end
 
-		loginStr = string.format("Your last visit on Imperium: %s.", os.date("%a %b %d %X %Y", player:getLastLoginSaved()))
+		loginStr = string.format("Your last visit on Tenebra OT: %s.", os.date("%a %b %d %X %Y", player:getLastLoginSaved()))
 		player:openChannel(4)
 		player:openChannel(6)
 		player:openChannel(7)

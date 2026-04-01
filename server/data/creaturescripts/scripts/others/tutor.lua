@@ -1,7 +1,7 @@
 function onModalWindow(cid, modalWindowId, buttonId, choiceId)
 	cid:unregisterEvent("modalwindowhelper")
 	local mensagem = { 
-		[1] = "Automatic Tutor: Task NPCs are found in all Imperium cities, the common location is near the depot.", -- aqui é voce vai adicionar as respostas respeitando a sequencia
+		[1] = "Automatic Tutor: Task NPCs are found in all Tenebra OT cities, the common location is near the depot.", -- aqui é voce vai adicionar as respostas respeitando a sequencia
 		[2] = "Automatic Tutor: The maximum number of tasks you can do per monster is 2.",
 		[3] = "Automatic Tutor: The promotion is worth 10k",
 		[4] = "Automatic Tutor: Yes, you can go alone, when you enter the level door you will find a teleport which will take you to the quest prizes.",

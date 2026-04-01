@@ -8,7 +8,7 @@ function onJoin(player)
     addEvent(function(cid)
         local player = Player(cid)
         if not player then return end
-        player:sendChannelMessage("", "If you have doubts about the server, type !tutor to interact with Imperium's automatic tutor.", TALKTYPE_CHANNEL_R1, CHANNEL_HELP)
+        player:sendChannelMessage("", "If you have doubts about the server, type !tutor to interact with the Tenebra OT automatic tutor.", TALKTYPE_CHANNEL_R1, CHANNEL_HELP)
     end, 100, player.uid)
     return true
 end
