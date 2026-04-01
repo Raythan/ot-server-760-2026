@@ -5,11 +5,7 @@ import rateLimit from '@fastify/rate-limit';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { getPool } from './db.js';
 import { sha1Password } from './crypto.js';
-import {
-  buildPlayerRow,
-  ALLOWED_TOWN_IDS,
-  ALLOWED_VOCATIONS,
-} from './playerDefaults.js';
+import { buildPlayerRow, ALLOWED_TOWN_IDS } from './playerDefaults.js';
 import { mapMysqlOrSystemError } from './mysqlErrors.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-only-change-JWT_SECRET';
@@ -158,6 +154,15 @@ fastify.post<{ Body: { password?: string; email?: string } }>(
     validatePassword(password);
     validateEmailForRegister(email);
     const pool = getPool();
+    const [existing] = await pool.query(
+      'SELECT `id` FROM `accounts` WHERE LOWER(`email`) = LOWER(?) LIMIT 1',
+      [email]
+    );
+    if ((existing as { id: number }[])[0]) {
+      return reply
+        .code(409)
+        .send({ error: 'Este e-mail já está registado.' });
+    }
     const conn = await pool.getConnection();
     try {
       await conn.query('LOCK TABLES `accounts` WRITE');
@@ -185,7 +190,7 @@ fastify.post<{ Body: { password?: string; email?: string } }>(
   }
 );
 
-fastify.post<{ Body: { accountId?: number; password?: string } }>(
+fastify.post<{ Body: { email?: string; password?: string } }>(
   '/api/login',
   {
     config: {
@@ -196,21 +201,21 @@ fastify.post<{ Body: { accountId?: number; password?: string } }>(
     },
   },
   async (request, reply) => {
-    const accountId = request.body?.accountId;
+    const email = (request.body?.email ?? '').trim().slice(0, 255);
     const password = request.body?.password ?? '';
-    if (typeof accountId !== 'number' || accountId < 1 || !Number.isInteger(accountId)) {
-      return reply.code(400).send({ error: 'Número de conta inválido.' });
-    }
+    validateEmailForRegister(email);
     validatePassword(password);
     const pool = getPool();
     const hash = sha1Password(password);
     const [rows] = await pool.query(
-      'SELECT `id`, `password` FROM `accounts` WHERE `id` = ? LIMIT 1',
-      [accountId]
+      'SELECT `id`, `password` FROM `accounts` WHERE LOWER(`email`) = LOWER(?) LIMIT 1',
+      [email]
     );
     const row = (rows as { id: number; password: string }[])[0];
     if (!row || row.password !== hash) {
-      return reply.code(401).send({ error: 'Conta ou palavra-passe incorretos.' });
+      return reply
+        .code(401)
+        .send({ error: 'E-mail ou palavra-passe incorretos.' });
     }
     const token = signToken(row.id);
     return { token, accountId: row.id };
@@ -226,31 +231,73 @@ fastify.get('/api/characters', async (request) => {
   const accountId = verifyBearer(request.headers.authorization);
   const pool = getPool();
   const [rows] = await pool.query(
-    'SELECT `id`, `name`, `level`, `vocation` FROM `players` WHERE `account_id` = ? AND `deletion` = 0 ORDER BY `name`',
+    `SELECT p.\`id\`, p.\`name\`, p.\`level\`, p.\`vocation\`,
+      CASE WHEN po.\`player_id\` IS NOT NULL THEN 1 ELSE 0 END AS \`online\`
+     FROM \`players\` p
+     LEFT JOIN \`players_online\` po ON po.\`player_id\` = p.\`id\`
+     WHERE p.\`account_id\` = ? AND p.\`deletion\` = 0
+     ORDER BY p.\`name\``,
     [accountId]
   );
+  const list = rows as {
+    id: number;
+    name: string;
+    level: number;
+    vocation: number;
+    online: unknown;
+  }[];
   return {
-    characters: rows as {
-      id: number;
-      name: string;
-      level: number;
-      vocation: number;
-    }[],
+    characters: list.map((r) => ({
+      id: r.id,
+      name: r.name,
+      level: r.level,
+      vocation: r.vocation,
+      online: Number(r.online) === 1,
+    })),
   };
 });
+
+fastify.delete<{ Params: { id: string } }>(
+  '/api/characters/:id',
+  async (request, reply) => {
+    const accountId = verifyBearer(request.headers.authorization);
+    const playerId = parseInt(request.params.id, 10);
+    if (!Number.isFinite(playerId) || playerId < 1) {
+      return reply.code(400).send({ error: 'ID de personagem inválido.' });
+    }
+    const pool = getPool();
+    const [onlineRows] = await pool.query(
+      'SELECT 1 FROM `players_online` WHERE `player_id` = ? LIMIT 1',
+      [playerId]
+    );
+    if ((onlineRows as unknown[]).length > 0) {
+      return reply.code(409).send({
+        error:
+          'Este personagem está online no jogo. Termine a sessão no cliente para poder eliminar.',
+      });
+    }
+    const [result] = await pool.query(
+      'DELETE FROM `players` WHERE `id` = ? AND `account_id` = ? AND `deletion` = 0',
+      [playerId, accountId]
+    );
+    const affected = (result as { affectedRows?: number }).affectedRows ?? 0;
+    if (affected === 0) {
+      return reply.code(404).send({ error: 'Personagem não encontrado.' });
+    }
+    return { ok: true };
+  }
+);
 
 fastify.post<{
   Body: {
     name?: string;
     sex?: number;
-    vocation?: number;
     townId?: number;
   };
 }>('/api/characters', async (request, reply) => {
   const accountId = verifyBearer(request.headers.authorization);
   const name = request.body?.name ?? '';
   const sex = request.body?.sex;
-  const vocation = request.body?.vocation;
   let townId = request.body?.townId;
   if (townId === undefined || townId === null) {
     townId = 1;
@@ -264,12 +311,6 @@ fastify.post<{
     return reply
       .code(400)
       .send({ error: 'Indique se o personagem é feminino ou masculino.' });
-  }
-  if (
-    typeof vocation !== 'number' ||
-    !ALLOWED_VOCATIONS.includes(vocation as 0 | 1 | 2 | 3 | 4)
-  ) {
-    return reply.code(400).send({ error: 'Escolha uma vocação válida.' });
   }
   if (!ALLOWED_TOWN_IDS.includes(townId as 1 | 11)) {
     return reply.code(400).send({ error: 'Cidade inválida.' });
@@ -298,7 +339,6 @@ fastify.post<{
       name: name.trim(),
       accountId,
       sex: sex as 0 | 1,
-      vocation,
       townId,
       created,
     });

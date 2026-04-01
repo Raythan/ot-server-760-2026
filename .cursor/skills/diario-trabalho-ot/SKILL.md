@@ -16,6 +16,7 @@ Manter **`DIARIO-TRABALHO-LOCAL.md`** (raiz do repositório) como registro crono
 
 - Pedido explícito (“anota no diário”, “registra os passos”).
 - Após blocos de trabalho que mudem ambiente, banco, `config.lua`, scripts ou comportamento do servidor.
+- Após alterações relevantes na **webapp** (`webapp/server`, `webapp/client`) — API, fluxo de contas/personagens ou protocolo alinhado ao cliente.
 
 ## Formato de cada entrada
 

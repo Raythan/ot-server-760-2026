@@ -7,15 +7,21 @@ registerSW({ immediate: true });
 const TOKEN_KEY = 'ot_jwt';
 const GAME_TITLE = 'Tenebra OT';
 
-type CharRow = { id: number; name: string; level: number; vocation: number };
+type CharRow = {
+  id: number;
+  name: string;
+  level: number;
+  vocation: number;
+  online: boolean;
+};
 
-/** Nomes alinhados aos IDs `vocation` na base de dados (TFS). */
-const VOCATION_NAMES: Record<number, string> = {
-  0: 'None',
-  1: 'Sorcerer',
-  2: 'Druid',
-  3: 'Paladin',
-  4: 'Knight',
+/** Rótulos para IDs de vocação TFS (0 = None / aprendiz até escolher classe no jogo). */
+const VOCATION_LABELS: Record<number, string> = {
+  0: 'Aprendiz',
+  1: 'Feiticeiro',
+  2: 'Druida',
+  3: 'Paladino',
+  4: 'Cavaleiro',
 };
 
 function getToken(): string | null {
@@ -81,9 +87,9 @@ function render(): void {
     body = `
       <section class="card">
         <h1>Entrar</h1>
-        <p class="hint">Utilize o <strong>número da conta</strong> que recebeu ao criar a conta e a respetiva <strong>palavra-passe</strong> para jogar no <strong>${esc(GAME_TITLE)}</strong>.</p>
+        <p class="hint">Utilize o mesmo <strong>e-mail</strong> e <strong>palavra-passe</strong> do registo para gerir personagens e para entrar no <strong>${esc(GAME_TITLE)}</strong> no cliente.</p>
         <form id="form-login">
-          <label>Número da conta <input name="accountId" type="number" min="1" step="1" required inputmode="numeric" autocomplete="username" /></label>
+          <label>E-mail <input name="email" type="email" required maxlength="255" autocomplete="username" /></label>
           <label>Palavra-passe <input name="password" type="password" required minlength="6" maxlength="48" autocomplete="current-password" /></label>
           <button type="submit">Entrar</button>
         </form>
@@ -95,23 +101,12 @@ function render(): void {
         <h1>Personagens</h1>
         <div id="char-list" class="char-list"><p class="muted">A carregar…</p></div>
         <div id="create-char-wrap" class="create-wrap">
-          <h2>Criar personagem</h2>
-          <p class="hint">Indique o nome, o sexo e a vocação. Pode criar mais personagens mais tarde.</p>
           <form id="form-char">
             <label>Nome do personagem <input name="name" required minlength="3" maxlength="29" pattern="[A-Za-z]+(?: [A-Za-z]+)*" title="Apenas letras e um espaço entre palavras" autocomplete="off" /></label>
             <label>Sexo
               <select name="sex">
                 <option value="1">Masculino</option>
                 <option value="0">Feminino</option>
-              </select>
-            </label>
-            <label>Vocação
-              <select name="vocation">
-                <option value="0">None</option>
-                <option value="1">Sorcerer</option>
-                <option value="2">Druid</option>
-                <option value="3">Paladin</option>
-                <option value="4">Knight</option>
               </select>
             </label>
             <button type="submit">Criar personagem</button>
@@ -173,7 +168,7 @@ function render(): void {
         }
       );
       setToken(r.token);
-      flash = `Conta criada no ${GAME_TITLE}. O número da sua conta é ${r.accountId}. Guarde este número para entrar no cliente.`;
+      flash = `Conta criada no ${GAME_TITLE}. Use o mesmo e-mail e palavra-passe no cliente (OTClient) para listar personagens e jogar.`;
       tab = 'chars';
       render();
     } catch (err) {
@@ -189,14 +184,14 @@ function render(): void {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const fd = new FormData(form);
-    const accountId = Number(fd.get('accountId'));
+    const email = String(fd.get('email') ?? '').trim();
     const password = String(fd.get('password') ?? '');
     try {
       const r = await apiJson<{ token: string; accountId: number }>(
         '/api/login',
         {
           method: 'POST',
-          body: JSON.stringify({ accountId, password }),
+          body: JSON.stringify({ email, password }),
         }
       );
       setToken(r.token);
@@ -218,12 +213,11 @@ function render(): void {
       const fd = new FormData(form);
       const name = String(fd.get('name') ?? '').trim();
       const sex = Number(fd.get('sex'));
-      const vocation = Number(fd.get('vocation'));
       try {
         await apiJson('/api/characters', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ name, sex, vocation }),
+          body: JSON.stringify({ name, sex }),
         });
         flash = `Personagem «${name}» criado com sucesso.`;
         render();
@@ -251,15 +245,53 @@ async function loadCharacters(app: HTMLElement, token: string): Promise<void> {
         '<p class="muted">Ainda não tem personagens. Utilize o formulário abaixo para criar o primeiro.</p>';
       return;
     }
-    listEl.innerHTML =
-      '<ul>' +
-      characters
-        .map((c) => {
-          const voc = VOCATION_NAMES[c.vocation] ?? '—';
-          return `<li><span class="name">${esc(c.name)}</span> <span class="meta">nível ${c.level} · ${esc(voc)}</span></li>`;
-        })
-        .join('') +
-      '</ul>';
+    const rows = characters
+      .map((c) => {
+        const voc = VOCATION_LABELS[c.vocation] ?? `voc. ${c.vocation}`;
+        const statusClass = c.online ? 'status-online' : 'status-offline';
+        const statusText = c.online ? 'Online' : 'Offline';
+        const delBtn = c.online
+          ? `<button type="button" class="btn-del" disabled title="Termine a sessão no cliente para eliminar">Eliminar</button>`
+          : `<button type="button" class="btn-del" data-id="${c.id}">Eliminar</button>`;
+        return `<li class="char-row">
+          <div class="char-main">
+            <span class="name">${esc(c.name)}</span>
+            <span class="meta">${esc(voc)} · nível ${c.level}</span>
+            <span class="status ${statusClass}">${statusText}</span>
+          </div>
+          <div class="char-actions">${delBtn}</div>
+        </li>`;
+      })
+      .join('');
+    listEl.innerHTML = `<ul class="char-ul">${rows}</ul>`;
+
+    listEl.querySelectorAll('.btn-del[data-id]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = Number((btn as HTMLButtonElement).dataset.id);
+        if (!Number.isFinite(id)) return;
+        if (
+          !confirm(
+            'Eliminar este personagem? Esta ação não pode ser desfeita.'
+          )
+        ) {
+          return;
+        }
+        try {
+          await apiJson(`/api/characters/${id}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          flash = 'Personagem eliminado.';
+          render();
+        } catch (err) {
+          flash =
+            err instanceof Error
+              ? err.message
+              : 'Não foi possível eliminar o personagem.';
+          render();
+        }
+      });
+    });
   } catch {
     listEl.innerHTML =
       '<p class="err">Não foi possível carregar a lista. Inicie sessão novamente.</p>';

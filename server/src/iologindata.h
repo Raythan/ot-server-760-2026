@@ -32,8 +32,9 @@ class IOLoginData
 		static Account loadAccount(uint32_t accno);
 		static bool saveAccount(const Account& acc);
 
-		static bool loginserverAuthentication(uint32_t accountNumber, const std::string& password, Account& account);
-		static uint32_t gameworldAuthentication(uint32_t accountNumber, const std::string& password, std::string& characterName);
+		/** `accountEmail`: endereço registado em `accounts.email` (login no cliente e na API). */
+		static bool loginserverAuthentication(const std::string& accountEmail, const std::string& password, Account& account);
+		static uint32_t gameworldAuthentication(const std::string& accountEmail, const std::string& password, std::string& characterName);
 
 		static AccountType_t getAccountType(uint32_t accountId);
 		static void setAccountType(uint32_t accountId, AccountType_t accountType);

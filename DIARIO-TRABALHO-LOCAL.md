@@ -17,6 +17,13 @@ Registo cronológico de decisões, ambiente e passos de compilação nesta máqu
 
 ## Linha do tempo
 
+### 2026-03-31 — Login por e-mail, aprendiz nível 8 e painel de personagens (webapp)
+
+- **Cliente OT (`otclientv8/`, pasta local, ainda ignorada pelo Git):** em **`modules/game_features/features.lua`**, `GameAccountNames` ativado para protocolo **772–839** para enviar **string** (e-mail) no login; **`entergame`**: campo de conta como **TextEdit**, rótulo **E-mail**; tradução **`E-mail:`** em `neededtranslations.lua`.
+- **TFS:** **`server/src/iologindata.*`** — `loginserverAuthentication` / `gameworldAuthentication` por **`LOWER(email)`**; **`protocollogin.*`** e **`protocolgame.cpp`** — primeiro identificador **string** (e-mail), não `uint32`; mensagens *Email or password…*; **`protocolgame.cpp`** corrigido para declarar `accountEmail` (merge incompleto que impedia o build).
+- **Webapp:** **`webapp/server`**: `POST /api/login` com **e-mail** + senha; `POST /api/register` com verificação de e-mail duplicado; **`GET /api/characters`** com **`online`** via `LEFT JOIN players_online`; **`DELETE /api/characters/:id`** se offline; criação de personagem só **nome + sexo** — **`webapp/server/src/playerDefaults.ts`**: **vocation 0 (None)**, **nível 8**, stats alinhados à vocação **0** em **`server/data/XML/vocations.xml`** (ganhos 1→8) e **`getExpForLevel(8)`** como no TFS.
+- **Webapp UI:** **`webapp/client`**: lista com vocação (ex. «Aprendiz»), nível, online/offline, botão eliminar; estilos em **`style.css`**.
+
 ### 2026-03-31 — Web app (API + Vite), documentação e diário na raiz
 
 - Pasta **`webapp/`**: API Node (`webapp/server`, Fastify, **mysql2**) e cliente PWA (`webapp/client`, Vite). Senhas **SHA1** alinhadas ao TFS; **`JWT_SECRET`** e credenciais MySQL só em **`.env`** (arquivo ignorado pelo Git; usar **`webapp/server/.env.example`** como modelo).

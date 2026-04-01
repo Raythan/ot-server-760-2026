@@ -33,6 +33,7 @@
 #include "iologindata.h"
 #include "waitlist.h"
 #include "ban.h"
+#include "tools.h"
 #include "scheduler.h"
 
 extern ConfigManager g_config;
@@ -269,7 +270,8 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 
 	msg.skipBytes(1); // gamemaster flag
 
-	uint32_t accountNumber = msg.get<uint32_t>();
+	std::string accountEmail = msg.getString();
+	trimString(accountEmail);
 	std::string characterName = msg.getString();
 	std::string password = msg.getString();
 	
@@ -307,15 +309,20 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 		return;
 	}
 
-	uint32_t accountId = IOLoginData::gameworldAuthentication(accountNumber, password, characterName);
+	if (accountEmail.empty()) {
+		disconnectClient("Invalid email.");
+		return;
+	}
+
+	uint32_t accountId = IOLoginData::gameworldAuthentication(accountEmail, password, characterName);
 	if (accountId == 0) {
-		disconnectClient("Account number or password is not correct.");
+		disconnectClient("Email or password is not correct.");
 		return;
 	}	
 
 	Account account;
-	if (!IOLoginData::loginserverAuthentication(accountNumber, password, account)) {
-		disconnectClient("Account number or password is not correct.");
+	if (!IOLoginData::loginserverAuthentication(accountEmail, password, account)) {
+		disconnectClient("Email or password is not correct.");
 		return;
 	}
 	

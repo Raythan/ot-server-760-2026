@@ -45,7 +45,7 @@ class ProtocolLogin : public Protocol
 		void sendUpdateRequest();
 		void disconnectClient(const std::string& message);
 
-		void getCharacterList(uint32_t accountNumber, const std::string& password);
+		void getCharacterList(const std::string& accountEmail, const std::string& password);
 };
 
 #endif

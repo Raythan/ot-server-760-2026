@@ -22,6 +22,7 @@
 #include "iologindata.h"
 #include "configmanager.h"
 #include "game.h"
+#include "tools.h"
 
 extern ConfigManager g_config;
 extern Game g_game;
@@ -51,12 +52,19 @@ bool IOLoginData::saveAccount(const Account& acc)
 	return Database::getInstance()->executeQuery(query.str());
 }
 
-bool IOLoginData::loginserverAuthentication(uint32_t accountNumber, const std::string& password, Account& account)
+bool IOLoginData::loginserverAuthentication(const std::string& accountEmail, const std::string& password, Account& account)
 {
 	Database* db = Database::getInstance();
 
+	std::string email = accountEmail;
+	trimString(email);
+	if (email.empty()) {
+		return false;
+	}
+
 	std::ostringstream query;
-	query << "SELECT `id`, `password`, `type`, `premdays`, `lastday` FROM `accounts` WHERE `id` = " << accountNumber;
+	query << "SELECT `id`, `password`, `type`, `premdays`, `lastday` FROM `accounts` WHERE LOWER(`email`) = LOWER("
+	      << db->escapeString(email) << ") LIMIT 1";
 	DBResult_ptr result = db->storeQuery(query.str());
 	if (!result) {
 		return false;
@@ -85,12 +93,18 @@ bool IOLoginData::loginserverAuthentication(uint32_t accountNumber, const std::s
 	return true;
 }
 
-uint32_t IOLoginData::gameworldAuthentication(uint32_t accountNumber, const std::string& password, std::string& characterName)
+uint32_t IOLoginData::gameworldAuthentication(const std::string& accountEmail, const std::string& password, std::string& characterName)
 {
 	Database* db = Database::getInstance();
 
+	std::string email = accountEmail;
+	trimString(email);
+	if (email.empty()) {
+		return 0;
+	}
+
 	std::ostringstream query;
-	query << "SELECT `id`, `password` FROM `accounts` WHERE `id` = " << accountNumber;
+	query << "SELECT `id`, `password` FROM `accounts` WHERE LOWER(`email`) = LOWER(" << db->escapeString(email) << ") LIMIT 1";
 	DBResult_ptr result = db->storeQuery(query.str());
 	if (!result) {
 		return 0;

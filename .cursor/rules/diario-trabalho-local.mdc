@@ -9,7 +9,7 @@ alwaysApply: false
 Ao editar `**/DIARIO*.md` neste repositório:
 
 1. Novas entradas vão na seção **Linha do tempo**, com cabeçalho `### YYYY-MM-DD — título curto`.
-2. Texto **resumido** em bullets; incluir caminhos `` `server/...` `` e decisões relevantes.
+2. Texto **resumido** em bullets; incluir caminhos `` `server/...` `` ou `` `webapp/...` `` quando couber, e decisões relevantes.
 3. Para o formato completo e quando atualizar, seguir a skill do projeto: `.cursor/skills/diario-trabalho-ot/SKILL.md`.
 
 Arquivo principal: `DIARIO-TRABALHO-LOCAL.md` na raiz do repositório.

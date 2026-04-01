@@ -28,6 +28,7 @@
 #include "iologindata.h"
 #include "ban.h"
 #include "game.h"
+#include "tools.h"
 
 extern ConfigManager g_config;
 extern Game g_game;
@@ -53,11 +54,11 @@ void ProtocolLogin::disconnectClient(const std::string& message)
 	disconnect();
 }
 
-void ProtocolLogin::getCharacterList(uint32_t accountNumber, const std::string& password)
+void ProtocolLogin::getCharacterList(const std::string& accountEmail, const std::string& password)
 {
 	Account account;
-	if (!IOLoginData::loginserverAuthentication(accountNumber, password, account)) {
-		disconnectClient("Account number or password is not correct.");
+	if (!IOLoginData::loginserverAuthentication(accountEmail, password, account)) {
+		disconnectClient("Email or password is not correct.");
 		return;
 	}
 
@@ -176,9 +177,10 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 		return;
 	}
 
-    uint32_t accountNumber = msg.get<uint32_t>();
-	if (!accountNumber) {
-		disconnectClient("Invalid account number.");
+	std::string accountEmail = msg.getString();
+	trimString(accountEmail);
+	if (accountEmail.empty()) {
+		disconnectClient("Invalid email.");
 		return;
 	}
 
@@ -195,5 +197,5 @@ void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
 	}
 
 	auto thisPtr = std::static_pointer_cast<ProtocolLogin>(shared_from_this());
-	g_dispatcher.addTask(createTask(std::bind(&ProtocolLogin::getCharacterList, thisPtr, accountNumber, password)));
+	g_dispatcher.addTask(createTask(std::bind(&ProtocolLogin::getCharacterList, thisPtr, accountEmail, password)));
 }
