@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Hellspawn" nameDescription="a hellspawn" race="fire" experience="2550" speed="344" manacost="0">
 	<health now="3500" max="3500" />
-	<look type="322" head="0" body="0" legs="0" feet="0" corpse="9923" />
+	<look type="267" head="0" body="0" legs="0" feet="0" corpse="4360" />
 	<targetchange interval="4000" chance="15" />
 	<targetstrategy nearest="70" weakest="10" mostdamage="10" random="10" />
 	<flags>
