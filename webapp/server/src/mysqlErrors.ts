@@ -65,6 +65,28 @@ export function mapMysqlOrSystemError(err: unknown): {
       detail: e.sqlMessage,
     };
   }
+  if (errno === 1054 || sqlCode === 'ER_BAD_FIELD_ERROR') {
+    const detail = e.sqlMessage ?? e.message;
+    const d = detail.toLowerCase();
+    if (
+      d.includes('web_pwreset_') ||
+      d.includes('web_recovery_') ||
+      d.includes('web_recovery_keys_initialized')
+    ) {
+      return {
+        status: 503,
+        message:
+          'Falta aplicar a migração SQL da recuperação de senha/chaves do webapp.',
+        detail:
+          'Execute webapp/server/sql/alter-accounts-web-recovery.sql na base MYSQL_DATABASE.',
+      };
+    }
+    return {
+      status: 500,
+      message: 'Coluna ausente no banco (schema incompatível com o esperado).',
+      detail,
+    };
+  }
   if (errno === 1136 || sqlCode === 'ER_WRONG_VALUE_COUNT_ON_ROW') {
     return {
       status: 500,

@@ -1,17 +1,80 @@
 import 'dotenv/config';
+import type { Pool } from 'mysql2/promise';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { getPool } from './db.js';
-import { sha1Password } from './crypto.js';
+import {
+  generateRecoveryKeyPlain,
+  generateResetTokenPlain,
+  hashRecoveryKey,
+  hashResetToken,
+  hexHashesEqual,
+  sha1Password,
+} from './crypto.js';
 import { buildPlayerRow, ALLOWED_TOWN_IDS } from './playerDefaults.js';
 import { mapMysqlOrSystemError } from './mysqlErrors.js';
+import { sendPasswordResetEmail } from './email.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-only-change-JWT_SECRET';
 
 /** Máximo de personagens por conta (API + cliente). */
 const MAX_CHARACTERS_PER_ACCOUNT = 50;
+
+const GENERIC_FORGOT_MSG =
+  'Se esse e-mail constar nos nossos registros, você receberá um link para redefinição de senha. Lembre-se de verificar a caixa de spam, lixeira, etc.';
+
+const PWRESET_TTL_SEC = Number(process.env.PASSWORD_RESET_TTL_SEC ?? 3600);
+
+const RECOVERY_KEY_COLUMNS = [
+  'web_recovery_key_1',
+  'web_recovery_key_2',
+  'web_recovery_key_3',
+  'web_recovery_key_4',
+  'web_recovery_key_5',
+] as const;
+const RECOVERY_SCHEMA_MISSING_MSG =
+  'Recuperação de senha temporariamente indisponível: falta aplicar a migração SQL do webapp (`webapp/server/sql/alter-accounts-web-recovery.sql`).';
+
+function isMissingRecoverySchemaError(err: unknown): boolean {
+  const e = err as { code?: string; errno?: number; message?: string } | null;
+  if (!e) return false;
+  const code = e.code;
+  const errno = e.errno;
+  if (code !== 'ER_BAD_FIELD_ERROR' && errno !== 1054) return false;
+  const msg = String(e.message ?? '').toLowerCase();
+  return (
+    msg.includes('web_pwreset_') ||
+    msg.includes('web_recovery_') ||
+    msg.includes('web_recovery_keys_initialized')
+  );
+}
+
+function delayForgotMs(): Promise<void> {
+  const ms = 150 + Math.floor(Math.random() * 100);
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function assignPasswordResetToken(
+  pool: Pool,
+  accountId: number,
+  viaSlot: number
+): Promise<string> {
+  const plain = generateResetTokenPlain();
+  const tokenHash = hashResetToken(plain);
+  const exp = Math.floor(Date.now() / 1000) + PWRESET_TTL_SEC;
+  await pool.query(
+    'UPDATE `accounts` SET `web_pwreset_token_hash` = ?, `web_pwreset_expires` = ?, `web_pwreset_via_recovery_slot` = ? WHERE `id` = ?',
+    [tokenHash, exp, viaSlot, accountId]
+  );
+  return plain;
+}
+
+function publicWebappBaseUrl(): string {
+  const v = (process.env.WEBAPP_PUBLIC_URL ?? '').trim().replace(/\/$/, '');
+  return v || 'http://localhost:5173';
+}
 
 function mysqlOnlineToBoolean(value: unknown): boolean {
   if (value === true || value === 1) return true;
@@ -219,18 +282,228 @@ fastify.post<{ Body: { email?: string; password?: string } }>(
     validatePassword(password);
     const pool = getPool();
     const hash = sha1Password(password);
-    const [rows] = await pool.query(
-      'SELECT `id`, `password` FROM `accounts` WHERE LOWER(`email`) = LOWER(?) LIMIT 1',
-      [email]
-    );
-    const row = (rows as { id: number; password: string }[])[0];
-    if (!row || row.password !== hash) {
-      return reply
-        .code(401)
-        .send({ error: 'E-mail ou senha incorretos.' });
+    try {
+      const [rows] = await pool.query(
+        `SELECT \`id\`, \`password\`, \`web_recovery_keys_initialized\`,
+          \`web_recovery_key_1\`, \`web_recovery_key_2\`, \`web_recovery_key_3\`, \`web_recovery_key_4\`, \`web_recovery_key_5\`
+         FROM \`accounts\` WHERE LOWER(\`email\`) = LOWER(?) LIMIT 1`,
+        [email]
+      );
+      const row = (rows as {
+        id: number;
+        password: string;
+        web_recovery_keys_initialized: number | boolean;
+      }[])[0];
+      if (!row || row.password !== hash) {
+        return reply
+          .code(401)
+          .send({ error: 'E-mail ou senha incorretos.' });
+      }
+      const token = signToken(row.id);
+      const initialized = Boolean(row.web_recovery_keys_initialized);
+      if (!initialized) {
+        const plains: string[] = [];
+        const hashes: string[] = [];
+        for (let i = 0; i < 5; i++) {
+          const p = generateRecoveryKeyPlain();
+          plains.push(p);
+          hashes.push(hashRecoveryKey(p));
+        }
+        await pool.query(
+          `UPDATE \`accounts\` SET
+            \`web_recovery_key_1\` = ?, \`web_recovery_key_2\` = ?, \`web_recovery_key_3\` = ?, \`web_recovery_key_4\` = ?, \`web_recovery_key_5\` = ?,
+            \`web_recovery_keys_initialized\` = 1
+           WHERE \`id\` = ?`,
+          [...hashes, row.id]
+        );
+        return { token, accountId: row.id, recoveryKeys: plains };
+      }
+      return { token, accountId: row.id, recoveryKeys: null };
+    } catch (err) {
+      if (isMissingRecoverySchemaError(err)) {
+        // Compatibilidade temporária: login continua funcional sem a migração.
+        const [rows] = await pool.query(
+          'SELECT `id`, `password` FROM `accounts` WHERE LOWER(`email`) = LOWER(?) LIMIT 1',
+          [email]
+        );
+        const row = (rows as { id: number; password: string }[])[0];
+        if (!row || row.password !== hash) {
+          return reply
+            .code(401)
+            .send({ error: 'E-mail ou senha incorretos.' });
+        }
+        const token = signToken(row.id);
+        return { token, accountId: row.id, recoveryKeys: null };
+      }
+      throw err;
     }
-    const token = signToken(row.id);
-    return { token, accountId: row.id };
+  }
+);
+
+fastify.post<{ Body: { email?: string; recoveryKey?: string } }>(
+  '/api/forgot-password',
+  {
+    config: {
+      rateLimit: {
+        max: Number(process.env.RATE_LIMIT_FORGOT_PASSWORD ?? 10),
+        timeWindow: '1 minute',
+      },
+    },
+  },
+  async (request, reply) => {
+    await delayForgotMs();
+    const email = (request.body?.email ?? '').trim().slice(0, 255);
+    const recoveryKeyRaw = request.body?.recoveryKey;
+    const hasRecovery =
+      typeof recoveryKeyRaw === 'string' && recoveryKeyRaw.trim().length > 0;
+
+    try {
+      validateEmailForRegister(email);
+    } catch (e) {
+      return reply.code(400).send({ error: (e as Error).message });
+    }
+
+    const pool = getPool();
+
+    try {
+      if (!hasRecovery) {
+        const [rows] = await pool.query(
+          'SELECT `id` FROM `accounts` WHERE LOWER(`email`) = LOWER(?) LIMIT 1',
+          [email]
+        );
+        const acc = (rows as { id: number }[])[0];
+        if (acc) {
+          const plain = await assignPasswordResetToken(pool, acc.id, 0);
+          const resetUrl = `${publicWebappBaseUrl()}/?redefinir=${encodeURIComponent(plain)}`;
+          await sendPasswordResetEmail({
+            log: fastify.log,
+            userEmail: email,
+            resetUrl,
+          });
+        }
+        return { message: GENERIC_FORGOT_MSG };
+      }
+
+      const [rows] = await pool.query(
+        `SELECT \`id\`, \`web_recovery_keys_initialized\`,
+          \`web_recovery_key_1\`, \`web_recovery_key_2\`, \`web_recovery_key_3\`, \`web_recovery_key_4\`, \`web_recovery_key_5\`
+         FROM \`accounts\` WHERE LOWER(\`email\`) = LOWER(?) LIMIT 1`,
+        [email]
+      );
+      const row = (rows as {
+        id: number;
+        web_recovery_keys_initialized: number | boolean;
+        web_recovery_key_1: string;
+        web_recovery_key_2: string;
+        web_recovery_key_3: string;
+        web_recovery_key_4: string;
+        web_recovery_key_5: string;
+      }[])[0];
+      const inputHash = hashRecoveryKey(recoveryKeyRaw!.trim());
+
+      if (!row || !row.web_recovery_keys_initialized) {
+        return {
+          message: GENERIC_FORGOT_MSG,
+          resetToken: null,
+        };
+      }
+
+      const slots = [
+        row.web_recovery_key_1,
+        row.web_recovery_key_2,
+        row.web_recovery_key_3,
+        row.web_recovery_key_4,
+        row.web_recovery_key_5,
+      ];
+      let matchedSlot = 0;
+      for (let i = 0; i < 5; i++) {
+        const h = slots[i] ?? '';
+        if (h && hexHashesEqual(h, inputHash)) {
+          matchedSlot = i + 1;
+          break;
+        }
+      }
+      if (matchedSlot === 0) {
+        return {
+          message: GENERIC_FORGOT_MSG,
+          resetToken: null,
+        };
+      }
+
+      const plain = await assignPasswordResetToken(pool, row.id, matchedSlot);
+      return {
+        message: GENERIC_FORGOT_MSG,
+        resetToken: plain,
+      };
+    } catch (err) {
+      if (isMissingRecoverySchemaError(err)) {
+        return reply.code(503).send({ error: RECOVERY_SCHEMA_MISSING_MSG });
+      }
+      throw err;
+    }
+  }
+);
+
+fastify.post<{ Body: { token?: string; password?: string } }>(
+  '/api/reset-password',
+  {
+    config: {
+      rateLimit: {
+        max: Number(process.env.RATE_LIMIT_RESET_PASSWORD ?? 20),
+        timeWindow: '1 minute',
+      },
+    },
+  },
+  async (request, reply) => {
+    const token = (request.body?.token ?? '').trim();
+    const password = request.body?.password ?? '';
+    try {
+      validatePassword(password);
+    } catch (e) {
+      return reply.code(400).send({ error: (e as Error).message });
+    }
+    if (!token) {
+      return reply
+        .code(400)
+        .send({ error: 'Token de redefinição inválido ou expirado.' });
+    }
+    try {
+      const tokenHash = hashResetToken(token);
+      const pool = getPool();
+      const now = Math.floor(Date.now() / 1000);
+      const [resetRows] = await pool.query(
+        'SELECT `id`, `web_pwreset_via_recovery_slot` FROM `accounts` WHERE `web_pwreset_token_hash` = ? AND `web_pwreset_expires` > ? LIMIT 1',
+        [tokenHash, now]
+      );
+      const resetRow = (
+        resetRows as { id: number; web_pwreset_via_recovery_slot: number }[]
+      )[0];
+      if (!resetRow) {
+        return reply
+          .code(400)
+          .send({ error: 'Token de redefinição inválido ou expirado.' });
+      }
+      const passHash = sha1Password(password);
+      const slot = Number(resetRow.web_pwreset_via_recovery_slot) || 0;
+      if (slot >= 1 && slot <= 5) {
+        const col = RECOVERY_KEY_COLUMNS[slot - 1];
+        await pool.query(
+          `UPDATE \`accounts\` SET \`password\` = ?, \`web_pwreset_token_hash\` = '', \`web_pwreset_expires\` = 0, \`web_pwreset_via_recovery_slot\` = 0, \`${col}\` = '' WHERE \`id\` = ?`,
+          [passHash, resetRow.id]
+        );
+      } else {
+        await pool.query(
+          'UPDATE `accounts` SET `password` = ?, `web_pwreset_token_hash` = \'\', `web_pwreset_expires` = 0, `web_pwreset_via_recovery_slot` = 0 WHERE `id` = ?',
+          [passHash, resetRow.id]
+        );
+      }
+      return { ok: true };
+    } catch (err) {
+      if (isMissingRecoverySchemaError(err)) {
+        return reply.code(503).send({ error: RECOVERY_SCHEMA_MISSING_MSG });
+      }
+      throw err;
+    }
   }
 );
 

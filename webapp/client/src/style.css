@@ -356,3 +356,153 @@ form button[type='submit']:hover {
 .site-footer p {
   margin: 0;
 }
+
+.forgot-row {
+  margin: -0.25rem 0 0.35rem;
+}
+
+.btn-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.btn-link:hover {
+  color: var(--heading);
+}
+
+.forgot-modes {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.forgot-modes button {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.forgot-modes button.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--heading);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(1px);
+}
+
+.modal-card {
+  max-width: 26rem;
+  width: 100%;
+  max-height: min(90svh, 32rem);
+  overflow: auto;
+}
+
+.recovery-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.recovery-list li {
+  margin-bottom: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.recovery-idx {
+  color: var(--text);
+  margin-right: 0.35rem;
+}
+
+.recovery-code {
+  color: var(--heading);
+  background: var(--bg);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.recovery-alert {
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.14);
+  color: #fecaca;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  margin: 0 0 0.85rem;
+}
+
+.recovery-alert p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.recovery-alert p + p {
+  margin-top: 0.35rem;
+}
+
+.btn-copy-key,
+.btn-copy-all {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--heading);
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn-copy-key {
+  padding: 0.12rem 0.45rem;
+  font-size: 0.78rem;
+}
+
+.btn-copy-all {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn-copy-key:hover,
+.btn-copy-all:hover {
+  border-color: var(--accent);
+}
+
+.btn.primary {
+  width: 100%;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent-dim);
+  color: var(--heading);
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn.primary:hover {
+  filter: brightness(1.08);
+}

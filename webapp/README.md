@@ -40,7 +40,48 @@ npm install
 npm run dev
 ```
 
-Por padrão escuta em `http://127.0.0.1:3847`. Rotas: `GET /api/health`, `POST /api/register` (retorna `accountId` + `token`), `POST /api/login`, `GET /api/me`, `GET /api/characters`, `POST /api/characters` (autenticadas com `Authorization: Bearer <jwt>`).
+Por padrão escuta em `http://127.0.0.1:3847`.
+
+### Migração SQL (contas: chaves e redefinição de senha)
+
+Execute **uma vez** na base do jogo (ex.: `tibia`), após backup:
+
+- Ficheiro: [`webapp/server/sql/alter-accounts-web-recovery.sql`](webapp/server/sql/alter-accounts-web-recovery.sql)
+
+Sem estas colunas, `POST /api/login` e os fluxos abaixo falham com erro de coluna desconhecida.
+
+### Rotas principais
+
+| Rota | Descrição |
+|------|-----------|
+| `GET /api/health` | Estado da API |
+| `POST /api/register` | Cria conta → `accountId`, `token` |
+| `POST /api/login` | Entrar → `token`, `accountId`; na **primeira vez** em que a conta ainda não tinha chaves web, também `recoveryKeys` (array de 5 strings, mostrar uma vez) |
+| `POST /api/forgot-password` | Corpo `{ email }` ou `{ email, recoveryKey }`. Com **só e-mail**: resposta **sempre** `{ message }` genérica (não revela se o e-mail existe); se existir conta, envia e-mail com link `/?redefinir=…`. Com **e-mail + chave**: mesma `message` em falha; em sucesso inclui `resetToken` para o cliente abrir o ecrã de nova senha |
+| `POST /api/reset-password` | Corpo `{ token, password }` — conclui a redefinição; se o pedido veio de uma chave, essa chave é consumida |
+| `GET /api/me`, `GET /api/characters`, `POST /api/characters`, `DELETE /api/characters/:id` | Com `Authorization: Bearer <jwt>` |
+
+### E-mail de redefinição de senha
+
+O envio usa o módulo [`webapp/server/src/email.ts`](webapp/server/src/email.ts). **Escolha do transporte** (por omissão detecta automaticamente):
+
+| Ordem (se `EMAIL_TRANSPORT` não estiver definido) | Variável que activa |
+|---------------------------------------------------|---------------------|
+| 1. SMTP | `SMTP_HOST` |
+| 2. Resend (API HTTP) | `RESEND_API_KEY` |
+| 3. Web3Forms (legado) | `WEB3FORMS_ACCESS_KEY` |
+
+Pode forçar com `EMAIL_TRANSPORT=smtp`, `resend`, `web3forms` ou `none` (não envia e-mail; o fluxo «esqueci senha» continua a responder de forma genérica).
+
+**SMTP (recomendado para “só configurar”):** funciona com [Brevo](https://www.brevo.com/) (SMTP relay gratuito com limites), Gmail (senha de app), Outlook, etc. Exemplo típico Brevo: `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`, `SMTP_USER` e `SMTP_PASSWORD` do painel SMTP, `SMTP_FROM="Nome <email@verificado>"` (o remetente deve estar autorizado no provedor).
+
+**Resend:** crie conta em [resend.com](https://resend.com), defina `RESEND_API_KEY` e `RESEND_FROM` (ex.: `onboarding@resend.dev` em testes ou domínio verificado).
+
+**Web3Forms:** útil só para testes rápidos; limitações conhecidas (destino da mensagem, planos). Ver `WEB3FORMS_*` no `.env.example`.
+
+Defina sempre `WEBAPP_PUBLIC_URL` com o URL **público** do site (sem barra final) — o link no e-mail usa `/?redefinir=<token>`.
+
+Variáveis: `webapp/server/.env.example` (`WEBAPP_PUBLIC_URL`, `PASSWORD_RESET_TTL_SEC`, `RATE_LIMIT_*`, SMTP, Resend ou Web3Forms).
 
 Produção: `npm run build`, depois `node dist/index.js`. Use **HTTPS** na frente (nginx, Caddy, etc.) e defina `JWT_SECRET` forte.
 
@@ -70,4 +111,5 @@ Sirva os arquivos em `dist/` atrás do mesmo domínio que a API ou configure `VI
 ## Segurança
 
 - Credenciais MySQL e `JWT_SECRET` só em variáveis de ambiente (nunca no browser).
-- Rate limiting global e reforçado em registro/login (variáveis `RATE_LIMIT_*`).
+- Rate limiting global e reforçado em registo/login e nos fluxos de redefinição (variáveis `RATE_LIMIT_*`).
+- Chaves de recuperação: geradas no **primeiro** login web após a migração (cinco códigos, armazenados como hash); cada chave pode ser usada uma vez com o e-mail em «Esqueci minha senha» (fluxo e-mail + chave).

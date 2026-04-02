@@ -17,6 +17,13 @@ Registo cronológico de decisões, ambiente e passos de compilação nesta máqu
 
 ## Linha do tempo
 
+### 2026-04-01 — Webapp: recuperação de senha, chaves de recuperação e Web3Forms
+
+- **SQL (executar na base `tibia`):** [`webapp/server/sql/alter-accounts-web-recovery.sql`](webapp/server/sql/alter-accounts-web-recovery.sql) — colunas `web_pwreset_*`, `web_pwreset_via_recovery_slot`, cinco hashes `web_recovery_key_*`, `web_recovery_keys_initialized`.
+- **API (`webapp/server`):** `POST /api/forgot-password` (só e-mail ou e-mail + chave), `POST /api/reset-password`; `POST /api/login` gera e devolve **uma vez** cinco chaves em texto claro quando `web_recovery_keys_initialized = 0`; consumo de chave ao redefinir com fluxo iniciado por chave. Envio de e-mail: [`webapp/server/src/email.ts`](webapp/server/src/email.ts) (SMTP via **nodemailer**, **Resend** HTTP ou **Web3Forms** legado; variáveis em `webapp/server/.env.example`).
+- **Cliente (`webapp/client`):** ecrã «Esqueci minha senha» (duas vias), `/?redefinir=`, formulário de nova senha, modal pós-login com as chaves.
+- **Documentação:** [`webapp/README.md`](webapp/README.md) (rotas, limitações Web3Forms, migração).
+
 ### 2026-03-31 — Schema SQL: remoção das tabelas `myaac_*` (MyAAC)
 
 - No repositório não existem tabelas **`myacc*`**; o que havia no dump era **`myaac_*`** (site **MyAAC** em PHP). O **TFS** e a **webapp Node** não as referenciam.
